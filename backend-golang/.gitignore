@@ -1,0 +1,33 @@
+# Binaries for programs and plugins
+.env
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories (uncomment to ignore vendor/ folder)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE-specific ignore files
+# e.g., for GoLand, VS Code, etc.
+.idea/
+.vscode/
+.go
+
+.dockerignore
+/temp/*
+
+ig-cookies.txt
+youtube_cookies.txt
+

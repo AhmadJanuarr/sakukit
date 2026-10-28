@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+@theme {
+  --font-sans: "Google Sans", "System UI", sans-serif;
+
+  /* Font Size */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-4xl: 32px;
+  --text-5xl: 57px;
+
+  --color-base-primary: #eeefec;
+  --color-base-secondary: #ffffff;
+  --color-accent-primary: #eaebeb;
+
+  --color-ink-primary: #212122;
+  --color-ink-secondary: #474745;
+  --color-ink-danger: #d9534f;
+  --color-ink-danger-hover: #c9302c;
+
+  --color-line-light: #efeeee;
+  --color-line-strong: #efeeee;
+
+  --color-action-primary: #e7e7e5;
+  --color-card-primary: #fbfbf8;
+  --color-card-search: #e0e1de;
+}
+
+@layer components {
+  .tool-icon {
+    @apply bg-action-primary/10 border-action-primary/20 flex size-10 items-center justify-center rounded-xl border p-2;
+  }
+
+  .card-default {
+    @apply bg-base-secondary border-line-light/20 hover:bg-card-primary rounded-2xl border p-4 transition-all duration-300 xl:p-5;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-base-primary);
+  color: var(--color-ink-primary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  font-weight: 400;
+  word-spacing: 2px;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: var(--text-base);
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1440px) {
+  body {
+    font-size: var(--text-base);
+    line-height: 1.8;
+  }
+}
