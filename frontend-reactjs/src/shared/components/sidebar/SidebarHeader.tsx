@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
-import { LuPanelRightClose, LuPanelRightOpen } from "react-icons/lu";
 import { cn } from "@/shared/utils/class-names";
+import { PiSidebar } from "react-icons/pi";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/Button";
 
 interface SidebarHeaderProps {
   name: string;
@@ -8,32 +9,38 @@ interface SidebarHeaderProps {
   isCollapsed: boolean;
   onToggle: () => void;
 }
+
 export const SidebarHeader = ({ name, icon, isCollapsed, onToggle }: SidebarHeaderProps) => {
   return (
-    <div className="relative flex h-14 items-center py-6">
-      <Link
-        to="/"
+    <div
+      className={cn(
+        "flex h-14 items-center transition-all duration-300 ease-in-out",
+        isCollapsed ? "justify-center px-0" : "justify-between pl-4",
+      )}
+    >
+      <div
         className={cn(
-          "absolute flex items-center gap-3 rounded-lg p-1.5 transition-all duration-300 hover:opacity-80",
-          isCollapsed ? "pointer-events-none hidden" : "",
+          "flex items-center overflow-hidden transition-all duration-300 ease-in-out",
+          isCollapsed ? "max-w-0 opacity-0" : "max-w-50 flex-1 opacity-100",
         )}
       >
-        <img src={icon} alt="logo-madlabs" className="size-8 shrink-0 object-contain" />
-        <span className="text-ink-primary text-xl font-bold tracking-tight whitespace-nowrap">{name}</span>
-      </Link>
-      <button
-        type="button"
-        aria-label="Toggle sidebar"
-        onClick={onToggle}
-        className={cn(
-          "hover:text-ink-primary hover:bg-base-secondary flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-all duration-300 active:scale-95",
-          isCollapsed ? "mx-auto" : "ml-auto",
-        )}
-      >
-        <LuPanelRightOpen
-          className={cn("size-5 transition-transform duration-300", isCollapsed ? "rotate-180" : "rotate-0")}
-        />
-      </button>
+        <Link to="/" className="flex items-center gap-3 rounded-lg transition-opacity hover:opacity-80">
+          <img src={icon} alt="logo-sakukit" className="size-8 shrink-0 rounded-md object-contain" />
+          <div className="grid">
+            <span className="text-ink-primary truncate font-bold tracking-tight whitespace-nowrap">{name}</span>
+          </div>
+        </Link>
+      </div>
+      <div>
+        <Button variant="ghost" type="button" onClick={onToggle} className="shrink-0 py-5">
+          <PiSidebar
+            className={cn(
+              "text-ink-secondary size-5 transition-transform duration-400 ease-in-out",
+              isCollapsed ? "rotate-180" : "rotate-0",
+            )}
+          />
+        </Button>
+      </div>
     </div>
   );
 };

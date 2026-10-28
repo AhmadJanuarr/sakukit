@@ -25,28 +25,30 @@ export const UploadArea = ({
   return (
     <div
       onClick={handleContainerClick}
-      className="z-0 flex min-h-96 w-full cursor-pointer flex-col items-center justify-center gap-4 transition-all duration-300"
+      className="z-0 flex min-h-52 w-full cursor-pointer flex-col items-center justify-center gap-3 px-4 py-6 text-center sm:min-h-64 sm:flex-row sm:gap-6 sm:px-6 sm:py-8 sm:text-left"
     >
-      <div className="text-action-primary flex flex-col items-center justify-center gap-4 text-center text-base">
-        <LuCloudUpload className="size-18" />
-        <p>Pilih gambar atau Drag & Drop</p>
+      <div className="bg-base-primary rounded-full border p-3 sm:p-4">
+        <LuCloudUpload className="size-8 sm:size-10" />
       </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        accept="image/*"
-        className="hidden"
-        id="file-upload"
-        onChange={onChangeHandler}
-      />
-      <div className="flex flex-col flex-wrap items-center justify-center gap-3 sm:gap-5">
-        <Button label="file-upload">
+      <div className="flex min-w-0 flex-col">
+        <span className="text-base font-semibold sm:text-lg">Tarik gambar ke sini</span>
+        <span className="text-ink-secondary text-xs sm:text-sm">
+          Informasi: Maks. 5 MB/file • Maks. 5 gambar sekaligus
+        </span>
+      </div>
+      <div className="w-full sm:w-auto">
+        <Button className="w-full px-4 py-5.5 sm:w-auto" onClick={() => fileInputRef.current?.click()}>
           <LuFilePlus className="size-6" /> Pilih File
         </Button>
-        <span className="text-ink-secondary text-sm italic">
-          ⓘ Informasi: Maks. 5 MB/file • Maks. 5 gambar sekaligus
-        </span>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/*"
+          className="hidden"
+          id="file-upload"
+          onChange={onChangeHandler}
+        />
       </div>
     </div>
   );

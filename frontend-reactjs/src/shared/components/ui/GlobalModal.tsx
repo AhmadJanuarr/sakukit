@@ -21,21 +21,23 @@ export const GlobalModal = () => {
     <dialog
       ref={dialogRef}
       onClose={closeModal}
-      className="border-line-light bg-card-primary fixed inset-0 z-50 m-auto w-full max-w-lg rounded-2xl border p-6 transition-all backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+      className="fixed inset-0 z-50 m-auto w-full max-w-lg bg-transparent p-2 transition-all backdrop:bg-black/40 backdrop:backdrop-blur-sm"
     >
-      <div className="flex flex-col gap-4">
-        <div className="border-line-light flex items-center justify-between border-b pb-3">
-          <h3 className="text-ink-primary x text-lg font-bold">{title}</h3>
-          <button
-            type="button"
-            onClick={closeModal}
-            className="text-ink-secondary hover:bg-ink-primary hover:text-base-primary flex size-8 items-center justify-center rounded-lg transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+      <div className="bg-base-primary border-line-light rounded-2xl border p-6">
+        <div className="flex flex-col gap-4">
+          <div className="border-line-light flex items-center justify-between border-b pb-3">
+            <h3 className="text-ink-primary x text-lg font-bold">{title}</h3>
+            <button
+              type="button"
+              onClick={closeModal}
+              className="text-ink-secondary hover:bg-ink-primary hover:text-base-primary flex size-8 items-center justify-center rounded-lg transition-colors"
+            >
+              ✕
+            </button>
+          </div>
 
-        <div className="text-ink-primary text-sm">{content}</div>
+          <div className="text-ink-primary text-sm">{content}</div>
+        </div>
       </div>
     </dialog>
   );

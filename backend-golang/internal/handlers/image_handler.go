@@ -99,7 +99,7 @@ func (h *ImageHandler) ConvertImage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *ImageHandler) CompressionImage(w http.ResponseWriter, r *http.Request) {
+func (h *ImageHandler) CompressImage(w http.ResponseWriter, r *http.Request) {
 
 	select {
 	case h.semaphore <- struct{}{}:
@@ -209,9 +209,9 @@ func (h *ImageHandler) ResizeImage(w http.ResponseWriter, r *http.Request) {
 		}
 
 		safeFilename := fmt.Sprintf("%d-%s", time.Now().Unix(), filepath.Base(fileHeader.Filename))
-		srcPath := filepath.Join(h.config.Storage.UploadDir, safeFilename)
+		srcPath := filepath.Join(h.config.Storage.ResizedDir, safeFilename)
 
-		os.MkdirAll(h.config.Storage.UploadDir, 0755)
+		os.MkdirAll(h.config.Storage.ResizedDir, 0755)
 
 		if err := utils.SaveUploadedFile(fileHeader, srcPath); err != nil {
 			utils.JSONResponse(w, http.StatusInternalServerError, map[string]interface{}{

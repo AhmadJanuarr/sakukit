@@ -1,8 +1,14 @@
 package handlers
 
 import (
+	"context"
+	"fmt"
+	"io"
+	"log"
+	"mime"
 	"net/http"
-	"path/filepath"
+	"os/exec"
+	"strconv"
 	"strings"
 	"toolkits/internal/config"
 	"toolkits/internal/services"
@@ -25,46 +31,92 @@ func (h *DownloaderHandler) Downloader(w http.ResponseWriter, r *http.Request) {
 	select {
 	case h.semaphore <- struct{}{}:
 		defer func() { <-h.semaphore }()
-
-		inputURL := r.FormValue("inputURL")
-		formatID := r.FormValue("format_id")
-		if inputURL == "" || formatID == "" {
-			utils.JSONResponse(w, http.StatusBadRequest, map[string]interface{}{
-				"status":  http.StatusBadRequest,
-				"message": "Input dan FormatID tidak boleh kosong",
-			})
-			return
-		}
-		cacheKey := inputURL + "_" + formatID
-		if cachedPath, exists := utils.FileCache.Get(cacheKey); exists {
-			fileName := filepath.Base(cachedPath)
-			w.Header().Set("Content-Disposition", "attachment; filename=\""+fileName+"\"")
-			http.ServeFile(w, r, cachedPath)
-			return
-		}
-		resultPath, err := services.ProsessDownload(r.Context(), inputURL, formatID)
-		if err != nil {
-			utils.JSONResponse(w, http.StatusInternalServerError, map[string]interface{}{
-				"status":  http.StatusInternalServerError,
-				"message": "Maaf, download gagal dikarenakan server waktu tunggu melebihi dari 30 detik, silahkan coba lagi",
-				"error":   err.Error(),
-			})
-			return
-		}
-		utils.FileCache.Set(cacheKey, resultPath)
-		http.SetCookie(w, &http.Cookie{
-			Name:  "download_ready",
-			Value: "1",
-			Path:  "/",
-		})
-		w.Header().Set("Content-Disposition", "attachment; filename=\""+filepath.Base(resultPath)+"\"")
-		http.ServeFile(w, r, resultPath)
 	default:
 		utils.JSONResponse(w, http.StatusServiceUnavailable, map[string]interface{}{
 			"status":  http.StatusServiceUnavailable,
 			"message": "Server sibuk, coba lagi sebentar",
 		})
+		return
 	}
+
+	inputURL := strings.TrimSpace(r.URL.Query().Get("inputURL"))
+	formatID := strings.TrimSpace(r.URL.Query().Get("format_id"))
+	extension := strings.ToLower(strings.TrimPrefix(r.URL.Query().Get("ext"), "."))
+	fileSizeStr := strings.TrimSpace(r.URL.Query().Get("fileSize"))
+
+	if inputURL == "" || formatID == "" || !isSafeExtension(extension) {
+		utils.JSONResponse(w, http.StatusBadRequest, map[string]any{
+			"status":  http.StatusBadRequest,
+			"message": "Input, format, atau ekstensi file tidak valid",
+		})
+		return
+	}
+
+	fileName := fmt.Sprintf("media_download.%s", extension)
+
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", mime.FormatMediaType(
+		"attachment", map[string]string{"filename": fileName},
+	))
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	if fileSizeStr != "" && fileSizeStr != "0" {
+		if size, err := strconv.ParseInt(fileSizeStr, 10, 64); err == nil && size > 0 {
+			w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
+			log.Printf("[INFO] Content-Length diset: %d bytes", size)
+		}
+	} else {
+		log.Printf("[WARN] fileSize kosong/0, Content-Length tidak diset")
+	}
+	err := streamMediaDirectly(r.Context(), w, inputURL, formatID)
+	if err != nil {
+		log.Printf("[STREAM ERROR] %v", err)
+		return
+	}
+}
+
+func streamMediaDirectly(ctx context.Context, w http.ResponseWriter, inputURL, formatID string) error {
+
+	args := []string{
+		"-f", formatID,
+		"-o", "-",
+		"--no-playlist",
+		"--concurrent-fragments", "5",
+		"--postprocessor-args", "ffmpeg:-movflags frag_keyframe+empty_moov+default_base_moof",
+		inputURL,
+	}
+	cmd := exec.CommandContext(ctx, ".\\yt-dlp.exe", args...)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("failed to create stdout pipe: %w", err)
+	}
+
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return fmt.Errorf("failed to create stderr pipe: %w", err)
+	}
+
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start yt-dlp command: %w", err)
+	}
+
+	var stderrLog strings.Builder
+	go func() {
+		_, _ = io.Copy(&stderrLog, stderr)
+	}()
+
+	buf := make([]byte, 64*1024)
+	bytesCopied, err := io.CopyBuffer(w, stdout, buf)
+	cmdErr := cmd.Wait()
+	if bytesCopied == 0 || cmdErr != nil {
+		log.Printf("\n================ [DOWNLOAD ERROR LOG] ================\n")
+		log.Printf("Bytes Copied: %d", bytesCopied)
+		log.Printf("Command Err : %v", cmdErr)
+		log.Printf("STDERR Output:\n%s", stderrLog.String())
+		log.Printf("======================================================\n")
+		return fmt.Errorf("yt-dlp error: %s", stderrLog.String())
+	}
+
+	return nil
 }
 
 func (h *DownloaderHandler) DownloaderGetInfo(w http.ResponseWriter, r *http.Request) {
@@ -114,4 +166,16 @@ func (h *DownloaderHandler) DownloaderGetInfo(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+}
+
+func isSafeExtension(extension string) bool {
+	if extension == "" || len(extension) > 10 {
+		return false
+	}
+	for _, char := range extension {
+		if (char < 'a' || char > 'z') && (char < '0' || char > '9') {
+			return false
+		}
+	}
+	return true
 }

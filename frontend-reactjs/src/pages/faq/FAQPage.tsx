@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { FAQ_DATA } from "@/constants/faq";
-import { Button } from "@/shared/components/ui/Button";
+import { buttonVariants } from "@/shared/components/ui/Button";
 import { cn } from "@/shared/utils/class-names";
+import { Link } from "react-router-dom";
 import { PageHeader } from "@/shared/components/ui/PageHeader";
 import { LuChevronRight, LuChevronUp } from "react-icons/lu";
 
@@ -96,13 +97,14 @@ export default function FAQPage() {
                 <p>Tolong hubungi kami via discord atau email, kami akan segera menanggapi pertanyaan Anda.</p>
               </div>
               <div className="w-full shrink-0 sm:w-auto">
-                <Button
-                  href="https://wa.me/628930507889?text=Halo%20kak%20saya%20punya%20pertanyaan%20"
-                  variant="outline"
-                  className="w-full sm:w-auto"
+                <Link
+                  to="https://wa.me/628930507889?text=Halo%20kak%20saya%20punya%20pertanyaan%20"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
                 >
                   Kontak Kami
-                </Button>
+                </Link>
               </div>
             </div>
           </div>

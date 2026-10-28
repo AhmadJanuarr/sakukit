@@ -1,10 +1,11 @@
 import { ToolPageLayout } from "@/shared/components/layouts/ToolPageLayout";
-import { useImageResizer } from "./_hooks/useImageResizer";
+import { useImageResizer } from "./hooks/useImageResizer";
 import { DropzoneContainer } from "@/shared/components/ui/DropzoneContainer";
 import { UploadArea } from "@/shared/components/ui/UploadArea";
-import { ImagePreview } from "./_components/ImagePreview";
-import { ResizerControls } from "./_components/ResizerControl";
+import { ImagePreview } from "./components/ImagePreview";
+import { ResizerControls } from "./components/ResizerControl";
 import { useUnsavedChangesWarning } from "@/shared/hooks/useUnsavedChangesWarning";
+import { RecommendedTools } from "@/shared/components/RecommendedTools";
 
 export default function ImageResizerPage() {
   const {
@@ -20,24 +21,22 @@ export default function ImageResizerPage() {
     handleClearAll,
     onCropComplete,
   } = useImageResizer();
-  const hasFiles = state.file.length > 0;
+  const hasFiles = state.files.length > 0;
 
   const onExecuteResize = async () => {
-    if (state.file[0]) {
-      await handleResize(state.file[0], height, width);
+    if (state.files[0]) {
+      await handleResize(state.files[0], height, width);
     }
   };
   useUnsavedChangesWarning({ hasUnsavedFiles: hasFiles });
+
   return (
-    <ToolPageLayout
-      title="Ubah Ukuran Gambar"
-      desc="Ubah ukuran gambar dengan presisi tinggi dan lebar yang diinginkan."
-    >
-      <section className="group h-full">
-        <DropzoneContainer dragHandler={actions.handleDrop}>
+    <ToolPageLayout>
+      <section className="flex flex-1 flex-col">
+        <DropzoneContainer dragHandler={actions.handleEventDrop}>
           {!hasFiles ? (
             <UploadArea
-              onChangeHandler={actions.handleChange}
+              onChangeHandler={actions.handleFileInputChange}
               isProcessing={state.isProcessing}
               pendingFileCount={state.pendingFileCount}
               variant="resize"
@@ -45,9 +44,9 @@ export default function ImageResizerPage() {
           ) : (
             <div className="flex h-200 w-full flex-col justify-between p-3">
               <div className="flex h-full flex-col gap-4 md:flex-row">
-                <div className="border-line-light relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-xl border p-4">
+                <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-xl">
                   <ImagePreview
-                    file={state.file[0]}
+                    file={state.files[0]}
                     targetHeight={height}
                     targetWidth={width}
                     onCropComplete={onCropComplete}
@@ -67,6 +66,9 @@ export default function ImageResizerPage() {
             </div>
           )}
         </DropzoneContainer>
+        <div className="mt-auto pt-6">
+          <RecommendedTools currentPath="/tools/image-resizer" isVisible={true} />
+        </div>
       </section>
     </ToolPageLayout>
   );

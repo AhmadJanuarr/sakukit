@@ -1,9 +1,9 @@
 export const SITE_CONFIG = {
-  name: "MaddLabs",
-  shortName: "MaddLabs",
+  name: "SAKU KIT",
+  shortName: "SAKU Kit",
   description:
-    "MaddLabs adalah Toolkit digital yang powerful untuk creator, developer, dan profesional modern. Proses file dalam sekejap, convert format tanpa batas, edit gambar dengan presisi— semua dalam satuplatform web yang cepat, aman, dan 100% gratis selamanya.",
-  icon: "/images/logo/maddlabs.png",
+    "SakuKit adalah Toolkit digital yang powerful untuk creator, developer, dan profesional modern. Proses file dalam sekejap, convert format tanpa batas, edit gambar dengan presisi— semua dalam satuplatform web yang cepat, aman, dan 100% gratis selamanya.",
+  icon: "/icon-sakukit.png",
   url: "",
   social: {
     instagram: "https://www.instagram.com/maddlab.dev",

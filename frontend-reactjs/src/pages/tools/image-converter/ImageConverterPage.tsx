@@ -1,45 +1,41 @@
 import { ToolPageLayout } from "@/shared/components/layouts/ToolPageLayout";
-import { useImageConverter } from "./_hooks/useImageConverter";
 import { DropzoneContainer } from "@/shared/components/ui/DropzoneContainer";
+import { RecommendedTools } from "@/shared/components/RecommendedTools";
 import { UploadArea } from "@/shared/components/ui/UploadArea";
-import { ImageQueue, ProcessingOverlay, UploadSuccessful } from "./_components";
+import { useUnsavedChangesWarning } from "@/shared/hooks/useUnsavedChangesWarning";
+import { ImageQueue } from "./components/ImageQueue";
+import { useImageConverter } from "./hooks/useImageConverter";
 
 export default function ImageConverterPage() {
-  const {
-    state,
-    actions,
-    isConverting,
-    selectedFormat,
-    setSelectedFormat,
-    handleConvert,
-    handleClearAll,
-    handleAddMoreImages,
-  } = useImageConverter();
-  const { file, isProcessing, isUploadSuccessful, pendingFileCount } = state;
+  const { state, actions } = useImageConverter();
+  const hasFiles = state.files.length > 0;
+  useUnsavedChangesWarning({ hasUnsavedFiles: hasFiles });
 
-  const hasFiles = file.length > 0;
-  const showSuccess = isUploadSuccessful && !isConverting && hasFiles;
   return (
-    <ToolPageLayout title="Konversi Gambar" desc="Konversi gambar ke format lain dengan mudah dan cepat.">
-      <section className="group h-full">
-        <DropzoneContainer dragHandler={actions.handleDrop}>
+    <ToolPageLayout>
+      <section className="flex flex-1 flex-col">
+        <DropzoneContainer dragHandler={actions.handleEventDrop}>
           <UploadArea
-            onChangeHandler={actions.handleChange}
-            isProcessing={isProcessing}
-            pendingFileCount={pendingFileCount}
+            onChangeHandler={actions.handleFileInputChange}
+            isProcessing={state.isUploading}
+            pendingFileCount={state.files.length}
             variant="default"
           />
         </DropzoneContainer>
-        <div className="flex flex-col p-3">
+        <div className="flex flex-1 flex-col justify-between pt-6">
           <ImageQueue
-            file={file}
-            selectedFormat={selectedFormat}
-            onFormatChange={setSelectedFormat}
-            handleImageRemove={actions.handleRemove}
-            convertImages={handleConvert}
-            addMoreImages={handleAddMoreImages}
-            handleClearAll={handleClearAll}
+            files={state.files}
+            isProcessing={state.isProcessing}
+            selectedFormats={state.selectedFormats}
+            onFormatChange={actions.handleFormatChange}
+            onRemoveFile={actions.removeFile}
+            onProcess={actions.processFiles}
+            onAddFiles={actions.addFiles}
+            onClearFiles={actions.clearAllFiles}
           />
+          <div className="mt-auto pt-6">
+            <RecommendedTools currentPath="/tools/image-converter" isVisible={true} />
+          </div>
         </div>
       </section>
     </ToolPageLayout>

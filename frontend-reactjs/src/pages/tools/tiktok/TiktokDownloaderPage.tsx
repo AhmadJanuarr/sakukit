@@ -2,13 +2,14 @@ import { ToolPageLayout } from "@/shared/components/layouts/ToolPageLayout";
 import { useMediaDownloader } from "@/shared/hooks/useMediaDownloader";
 import { SearchForm } from "@/shared/components/ui/SearchForm";
 import {
-  PreviewCard,
-  PreviewContent,
-  PreviewDownloadList,
-  PreviewInfo,
-  PreviewThumbnail,
-  UploadSkeleton,
-} from "./_components";
+  MediaPreviewCard,
+  MediaPreviewContent,
+  MediaPreviewDownloadList,
+  MediaPreviewInfo,
+  MediaPreviewThumbnail,
+} from "@/shared/components/media-preview";
+import { UploadSkeleton } from "./components/UploadSkeleton";
+import { RecommendedTools } from "@/shared/components/RecommendedTools";
 
 export default function TiktokDownloaderPage() {
   const { form, states, actions } = useMediaDownloader("tiktok");
@@ -18,37 +19,42 @@ export default function TiktokDownloaderPage() {
     formState: { errors, isSubmitting },
   } = form;
   return (
-    <ToolPageLayout
-      title="Pengunduh Video TikTok Tanpa Watermark"
-      desc="Simpan video TikTok favoritmu dalam kualitas HD tanpa watermark. Cepat, gratis, dan bisa langsung disimpan ke HP atau laptop."
-    >
-      <div className="h-full">
-        <SearchForm
-          errors={errors}
-          register={register}
-          onSubmit={handleSubmit(actions.onSubmit)}
-          placeholder="Tempel link video TikTok di sini (tiktok.com/...)"
-          isSubmitting={isSubmitting}
-          isDownloading={states.isDownloading}
-        />
-
-        {isSubmitting ? (
-          <UploadSkeleton />
-        ) : (
-          <PreviewCard active={states.activePreviewCard}>
-            <PreviewThumbnail src={states.info?.thumbnail} alt={states.info?.title} />
-            <PreviewContent>
-              <PreviewInfo title={states.info?.title} author={states.info?.author} duration={states.info?.duration} />
-              <PreviewDownloadList
-                formats={states.filteredFormats}
-                downloadingFormatId={states.downloadingFormatId}
-                downloadProgress={states.downloadProgress}
-                isDownloading={states.isDownloading}
-                onDownloadClick={actions.onDownloadClick}
-              />
-            </PreviewContent>
-          </PreviewCard>
-        )}
+    <ToolPageLayout>
+      <SearchForm
+        errors={errors}
+        register={register}
+        onSubmit={handleSubmit(actions.onSubmit)}
+        placeholder="Tempel link video TikTok di sini (tiktok.com/...)"
+        isSubmitting={isSubmitting}
+        isDownloading={states.isDownloading}
+      />
+      <div className="flex size-full flex-col justify-between pb-4">
+        <>
+          {isSubmitting ? (
+            <UploadSkeleton />
+          ) : (
+            <MediaPreviewCard active={states.activePreviewCard}>
+              <MediaPreviewThumbnail src={states.info?.thumbnail} alt={states.info?.title} />
+              <MediaPreviewContent>
+                <MediaPreviewInfo
+                  title={states.info?.title}
+                  author={states.info?.author}
+                  duration={states.info?.duration}
+                />
+                <MediaPreviewDownloadList
+                  formats={states.filteredFormats}
+                  downloadingFormatId={states.downloadingFormatId}
+                  isDownloading={states.isDownloading}
+                  onDownloadClick={actions.onDownloadClick}
+                  nonVideoLabel="Audio (MP3)"
+                  nonVideoIcon="music"
+                  fallbackQuality="Standard"
+                />
+              </MediaPreviewContent>
+            </MediaPreviewCard>
+          )}
+        </>
+        <RecommendedTools currentPath="/tools/tiktok" isVisible={true} />
       </div>
     </ToolPageLayout>
   );

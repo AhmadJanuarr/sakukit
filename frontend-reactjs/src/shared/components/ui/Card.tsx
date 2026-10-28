@@ -1,92 +1,69 @@
-import { cn } from "@/shared/utils/class-names";
-import { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { Badge } from "./Badge";
-import { IconType } from "react-icons";
+import * as React from "react";
+import { cn } from "cn";
 
-type CardProps = {
-  children: ReactNode;
-  href?: string;
-  className?: string;
-};
-
-export const Card = ({ children, href, className }: CardProps) => {
-  const containerClasses = cn(
-    "card-default group relative  z-10 flex w-full flex-col rounded-xl border border-gray-100 bg-white p-3",
-    className,
-  );
-
-  if (href) {
-    return (
-      <Link to={href} className={containerClasses}>
-        {children}
-      </Link>
-    );
-  }
-  return <div className={containerClasses}>{children}</div>;
-};
-
-export const CardContainer = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("rounded-xl group-hover:bg-blue-50")}>{children}</div>
-);
-
-export const CardHeader = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("flex h-52 flex-col gap-3 p-5", className)}>{children}</div>
-);
-
-export const CardTopBar = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("mb-4 flex w-full items-start justify-between", className)}>{children}</div>
-);
-
-export const CardHeaderTop = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("flex w-full items-center justify-between", className)}>{children}</div>
-);
-
-export const CardIcon = ({ icon: Icon, className }: { icon?: IconType; className?: string }) => {
-  if (!Icon) return null;
-
+function Card({ className, size = "default", ...props }: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
   return (
     <div
+      data-slot="card"
+      data-size={size}
       className={cn(
-        "tool-icon group-hover:bg-action-primary/20 group-hover:border-action-primary/40 flex size-12 items-center justify-center rounded-lg",
+        "group/card bg-card border-line-strong flex flex-col gap-(--card-spacing) overflow-hidden border py-(--card-spacing) text-sm [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className,
       )}
-    >
-      <Icon className="text-action-primary group-hover:text-primary-foreground size-8 transition-colors duration-300" />
-    </div>
+      {...props}
+    />
   );
-};
+}
 
-export const CardBadge = ({ children }: { children: ReactNode }) => {
-  if (!children) return null;
-  return <Badge>{children}</Badge>;
-};
-
-export const CardCategory = ({ text, className }: { text: string; className?: string }) => (
-  <div className="flex items-center py-1">
-    <span
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
       className={cn(
-        "bg-action-primary/10 border-action-primary/20 group-hover:bg-action-primary flex items-center justify-center rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-300 group-hover:text-white",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
         className,
       )}
-    >
-      {text}
-    </span>
-  </div>
-);
+      {...props}
+    />
+  );
+}
 
-export const CardTitle = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <h2 className={cn("group-hover:text-action-primary text-2xl font-semibold", className)}>{children}</h2>
-);
+function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn("cn-font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className)}
+      {...props}
+    />
+  );
+}
 
-export const CardDescription = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <p className={cn("text-sm leading-relaxed text-gray-600", className)}>{children}</p>
-);
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="card-description" className={cn("text-muted-foreground text-sm", className)} {...props} />;
+}
 
-export const CardContent = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("flex flex-col flex-wrap gap-2 pt-2", className)}>{children}</div>
-);
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+      {...props}
+    />
+  );
+}
 
-export const CardFooter = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <div className={cn("mt-auto flex w-full items-center justify-end p-5", className)}>{children}</div>
-);
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="card-content" className={cn("px-(--card-spacing)", className)} {...props} />;
+}
+
+function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn("bg-muted/50 flex items-center rounded-b border-t p-(--card-spacing)", className)}
+      {...props}
+    />
+  );
+}
+
+export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };

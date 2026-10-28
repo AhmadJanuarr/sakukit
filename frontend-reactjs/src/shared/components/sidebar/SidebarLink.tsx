@@ -8,10 +8,11 @@ interface SidebarLinkProps {
   icon: IconType;
   label: string;
   isCollapsed: boolean;
-  isAvailable: boolean;
+  isAvailable?: boolean;
+  onNavigate?: () => void;
 }
 
-export const SidebarLink = ({ to, icon: Icon, label, isCollapsed, isAvailable }: SidebarLinkProps) => {
+export const SidebarLink = ({ to, icon: Icon, label, isCollapsed, isAvailable, onNavigate }: SidebarLinkProps) => {
   const location = useLocation();
   const isActive = location.pathname === to;
   const isDisabled = !isAvailable;
@@ -19,6 +20,11 @@ export const SidebarLink = ({ to, icon: Icon, label, isCollapsed, isAvailable }:
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (isDisabled) {
       e.preventDefault();
+      return;
+    }
+
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      onNavigate?.();
     }
   };
 
@@ -29,21 +35,28 @@ export const SidebarLink = ({ to, icon: Icon, label, isCollapsed, isAvailable }:
         onClick={handleClick}
         aria-disabled={isDisabled}
         className={cn(
-          "text-ink-primary flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium",
+          "text-ink-secondary flex h-10 w-full items-center overflow-hidden rounded-lg border px-3 text-sm",
           isDisabled && "cursor-not-allowed opacity-50",
-          isCollapsed && "justify-center px-0",
-          isActive && !isDisabled ? "bg-base-secondary" : "border-transparent",
+          isActive && !isDisabled
+            ? "bg-base-primary border-black/5 dark:border-white/10"
+            : "hover:bg-base-secondary/50 hover:text-ink-primary border-transparent",
         )}
       >
-        <Icon className="size-5 justify-center" />
-        <span
+        <div className="flex size-5 shrink-0 items-center justify-center">
+          {Icon && <Icon className="size-4 shrink-0" />}
+        </div>
+        <div
           className={cn(
-            "overflow-hidden whitespace-nowrap",
-            isCollapsed ? "hidden w-0 opacity-0" : "w-auto opacity-100",
+            "ml-2.5 grid overflow-hidden transition-all duration-800 ease-in-out",
+            isCollapsed && "max-w-40 opacity-100",
           )}
         >
-          {label}
-        </span>
+          <span
+            className={cn("text-ink-secondary truncate whitespace-nowrap", isActive && "text-ink-primary font-medium")}
+          >
+            {label}
+          </span>
+        </div>
       </Link>
     </Tooltip>
   );

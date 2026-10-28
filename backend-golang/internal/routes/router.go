@@ -17,7 +17,7 @@ func Route(cfg *config.Config) http.Handler {
 	downloaderHandler := handlers.NewDownloaderHandler(cfg, globalLimit)
 
 	mux.HandleFunc("POST /api/v1/image/convert", imgHandler.ConvertImage)
-	mux.HandleFunc("POST /api/v1/image/compress-image", imgHandler.CompressionImage)
+	mux.HandleFunc("POST /api/v1/image/compress-image", imgHandler.CompressImage)
 	mux.HandleFunc("POST /api/v1/image/resize-image", imgHandler.ResizeImage)
 
 	proxyHandler := handlers.NewProxyHandler()

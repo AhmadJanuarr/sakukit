@@ -1,14 +1,15 @@
 import { ToolPageLayout } from "@/shared/components/layouts/ToolPageLayout";
 import { useMediaDownloader } from "@/shared/hooks/useMediaDownloader";
 import { SearchForm } from "@/shared/components/ui/SearchForm";
+import { UploadSkeleton } from "./components/UploadSkeleton";
 import {
-  PreviewCard,
-  PreviewContent,
-  PreviewDownloadList,
-  PreviewInfo,
-  PreviewThumbnail,
-  UploadSkeleton,
-} from "./_components";
+  MediaPreviewCard,
+  MediaPreviewContent,
+  MediaPreviewDownloadList,
+  MediaPreviewInfo,
+  MediaPreviewThumbnail,
+} from "@/shared/components/media-preview";
+import { RecommendedTools } from "@/shared/components/RecommendedTools";
 
 export default function InstagramDownloaderPage() {
   const { form, states, actions } = useMediaDownloader("instagram");
@@ -19,11 +20,8 @@ export default function InstagramDownloaderPage() {
   } = form;
 
   return (
-    <ToolPageLayout
-      title="Pengunduh Reel, Foto, & Video Instagram"
-      desc="Unduh konten Reels, Feed, hingga Carousel dari Instagram dengan mudah dan kualitas tajam tanpa mengurangi resolusi."
-    >
-      <div className="h-full">
+    <ToolPageLayout>
+      <div className="flex min-w-0 flex-1 flex-col gap-4 sm:gap-6">
         <SearchForm
           errors={errors}
           register={register}
@@ -32,23 +30,29 @@ export default function InstagramDownloaderPage() {
           isSubmitting={isSubmitting}
           isDownloading={states.isDownloading}
         />
-        {isSubmitting ? (
-          <UploadSkeleton />
-        ) : (
-          <PreviewCard active={states.activePreviewCard}>
-            <PreviewThumbnail src={states.info?.thumbnail} alt={states.info?.title} />
-            <PreviewContent>
-              <PreviewInfo title={states.info?.title} author={states.info?.author} />
-              <PreviewDownloadList
-                formats={states.filteredFormats}
-                downloadingFormatId={states.downloadingFormatId}
-                downloadProgress={states.downloadProgress}
-                isDownloading={states.isDownloading}
-                onDownloadClick={actions.onDownloadClick}
-              />
-            </PreviewContent>
-          </PreviewCard>
-        )}
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-6 pb-4">
+          {isSubmitting ? (
+            <UploadSkeleton />
+          ) : (
+            <MediaPreviewCard active={states.activePreviewCard}>
+              <MediaPreviewThumbnail src={states.info?.thumbnail} alt={states.info?.title} useProxy />
+              <MediaPreviewContent>
+                <MediaPreviewInfo
+                  title={states.info?.title}
+                  author={states.info?.author}
+                  duration={states.info?.duration}
+                />
+                <MediaPreviewDownloadList
+                  formats={states.filteredFormats}
+                  downloadingFormatId={states.downloadingFormatId}
+                  isDownloading={states.isDownloading}
+                  onDownloadClick={actions.onDownloadClick}
+                />
+              </MediaPreviewContent>
+            </MediaPreviewCard>
+          )}
+          <RecommendedTools currentPath="/tools/instagram" isVisible={true} />
+        </div>
       </div>
     </ToolPageLayout>
   );

@@ -22,21 +22,26 @@ export const SearchForm = ({
   const isFormDisabled = isSubmitting || isDownloading;
   return (
     <>
-      <form onSubmit={onSubmit} className="flex w-full gap-2 xl:gap-6">
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 sm:h-14 sm:w-full sm:flex-row sm:gap-2 xl:gap-6">
         <input
           type="text"
           placeholder={placeholder}
-          className={`border-line-light bg-base-primary focus:outline-action-primary w-full gap-6 rounded-md border p-4 focus:ring-0 focus:outline-2 ${
+          className={`border-line-strong bg-base-secondary focus:outline-action-primary h-12 w-full gap-6 rounded-md border px-4 focus:ring-0 focus:outline-2 sm:h-auto sm:px-6 ${
             isFormDisabled ? "cursor-not-allowed opacity-60" : ""
           }`}
           disabled={isFormDisabled}
           {...register("inputURL")}
         />
-        <Button type="submit" className="bg-action-primary w-1/4 rounded-md p-2 text-white" disabled={isFormDisabled}>
+        <Button
+          variant="default"
+          type="submit"
+          className="h-12 w-full rounded-md sm:h-full sm:w-1/4"
+          disabled={isFormDisabled}
+        >
           {isSubmitting ? "Memproses..." : "Mulai Sekarang"}
         </Button>
       </form>
-      {errors.inputURL && <p className="text-lg text-red-500">{errors.inputURL.message}</p>}
+      {errors.inputURL && <p className="text-sm text-red-500 sm:text-lg">{errors.inputURL.message}</p>}
     </>
   );
 };

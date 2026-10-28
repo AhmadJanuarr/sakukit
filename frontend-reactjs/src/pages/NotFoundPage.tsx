@@ -1,4 +1,6 @@
-import { Button } from "@/shared/components/ui/Button";
+import { buttonVariants } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/utils/class-names";
+import { Link } from "react-router-dom";
 
 export default function NotFoundPage() {
   return (
@@ -20,9 +22,9 @@ export default function NotFoundPage() {
             menarik yang menunggu Anda di sana!
           </p>
         </div>
-        <Button href="/" variant="contained" className="mt-8">
+        <Link to="/" className={cn(buttonVariants({ variant: "default" }), "mt-8")}>
           Kembali ke Beranda
-        </Button>
+        </Link>
       </div>
     </div>
   );

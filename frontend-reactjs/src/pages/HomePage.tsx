@@ -1,55 +1,57 @@
-import { SITE_CONFIG } from "@/constants/site-config";
-import { PiArrowRight } from "react-icons/pi";
+import { buttonVariants } from "@/shared/components/ui/Button";
+import { LuArrowUpRight } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
   return (
-    <div className="flex h-full min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-between px-6 py-12">
-      <div className="h-4 w-full sm:h-8"></div>
-
-      <div className="flex max-w-3xl flex-col items-center text-center">
-        <div className="border-line-light bg-base-secondary text-ink-secondary mb-8 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium tracking-wide">
-          v1.0.0 Stabil
-        </div>
-        <h1 className="text-ink-primary mb-6 text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
-          Utilitas Konten, <br className="hidden sm:block" />
-          <span className="text-ink-secondary">Disederhanakan.</span>
-        </h1>
-
-        {/* Professional Description */}
-        <p className="text-ink-secondary mb-10 max-w-xl text-base leading-relaxed md:text-lg">
-          Sistem perangkat utilitas modern yang dirancang untuk efisiensi. Kelola kompresi gambar hingga pengunduhan
-          aset digital, dioptimalkan dalam satu lingkungan kerja yang presisi.
-        </p>
-
-        {/* Call to Action */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+    <section className="flex min-h-full w-full items-center justify-center px-4 py-10 sm:px-6 sm:py-12">
+      <div className="flex w-full max-w-3xl flex-col items-center justify-center rounded-xl">
+        <div className="max-w-full">
           <Link
-            to="/image/compress"
-            className="group bg-ink-primary text-base-primary hover:bg-ink-primary/90 flex h-11 items-center justify-center gap-2 rounded-lg px-8 text-sm font-medium transition-all"
+            to="/changelog"
+            className="group border-line-strong bg-base-primary text-ink-secondary hover:border-ink-secondary inline-flex max-w-full items-center gap-2 rounded-md border px-3 py-2 font-mono text-[10px] transition-all duration-300 sm:py-1.5 sm:text-xs"
           >
-            Mulai Sesi
-            <PiArrowRight className="transition-transform group-hover:translate-x-1" />
+            <span className="flex size-1.5 shrink-0 animate-pulse rounded-full bg-green-500 sm:size-2" />
+            <span className="truncate">v1.0_ Minimum Viable Product</span>
+            <span className="text-ink-primary hidden shrink-0 font-semibold transition-transform group-hover:translate-x-0.5 sm:inline">
+              [ Liat Fitur → ]
+            </span>
           </Link>
-          <a
-            href="https://github.com/maddlabs-id/toolkits"
-            target="_blank"
-            rel="noreferrer"
-            className="border-line-strong text-ink-primary hover:bg-base-secondary flex h-11 items-center justify-center rounded-lg border bg-transparent px-8 text-sm font-medium transition-all"
-          >
-            Dokumentasi Sistem
-          </a>
+        </div>
+        <div className="my-8 flex flex-col items-center justify-center space-y-5 text-center sm:my-10 sm:space-y-6">
+          <h1 className="text-3xl leading-tight font-semibold sm:text-5xl lg:text-6xl">
+            SAKU Kit, <br className="hidden sm:block" />
+            <span className="text-ink-secondary">Satu tempat, semua alat yang kamu butuhkan.</span>
+          </h1>
+          <p className="text-ink-secondary max-w-2xl text-sm leading-relaxed sm:text-base">
+            SakuKit menyederhanakan pekerjaan digital Anda dari kompresi dan konversi gambar, hingga pengunduhan aset
+            digital, semua diproses instan tanpa instalasi tambahan.
+          </p>
+        </div>
+        <div className="flex w-full justify-center">
+          <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
+            <Link
+              to="/tools"
+              className={buttonVariants({
+                variant: "default",
+                className: "w-full gap-2 p-4 text-sm sm:w-auto sm:p-5",
+              })}
+            >
+              Coba sekarang <LuArrowUpRight aria-hidden="true" />
+            </Link>
+
+            <Link
+              to="/changelog"
+              className={buttonVariants({
+                variant: "outline",
+                className: "w-full p-4 text-sm sm:w-auto sm:p-5",
+              })}
+            >
+              Update Terbaru
+            </Link>
+          </div>
         </div>
       </div>
-
-      {/* Server Status Indicator */}
-      <div className="text-ink-secondary mt-16 flex items-center gap-2.5 text-xs font-medium sm:mt-0">
-        <span className="relative flex h-2 w-2">
-          <span className="bg-action-active absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
-          <span className="bg-action-active relative inline-flex h-2 w-2 rounded-full"></span>
-        </span>
-        Sistem Beroperasi Normal
-      </div>
-    </div>
+    </section>
   );
 }

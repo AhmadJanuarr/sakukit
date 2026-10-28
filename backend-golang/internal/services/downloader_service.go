@@ -146,7 +146,7 @@ func ProcessGetInfo(ctx context.Context, inputURL string) (*models.InfoResponse,
 	return info, nil
 }
 
-func ProsessDownload(ctx context.Context, inputURL string, formatID string) (string, error) {
+func ProcessDownload(ctx context.Context, inputURL string, formatID string) (string, error) {
 
 	platform := getPlatformFromURL(inputURL)
 	currentDir, err := os.Getwd()
